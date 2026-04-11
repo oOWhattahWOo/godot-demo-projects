@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://c83ucqmmrm0fs"]
+
+[ext_resource type="Script" uid="uid://b04u8n0q8m676" path="res://Main.cs" id="1_1bvp3"]
+[ext_resource type="Script" uid="uid://bo2tkgrhernpx" path="res://Player.cs" id="1_h2yge"]
+[ext_resource type="Texture2D" uid="uid://cmu25krt5o21g" path="res://arts/face_happy.png" id="2_1bvp3"]
+[ext_resource type="Texture2D" uid="uid://duowkq6y55ogu" path="res://arts/face_sad.png" id="3_lquwl"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7mycd"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_1bvp3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_lquwl")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_272bh"]
+radius = 27.0
+
+[node name="Main" type="Node2D" unique_id=1795950468]
+script = ExtResource("1_1bvp3")
+
+[node name="player" type="Area2D" parent="." unique_id=424267435]
+script = ExtResource("1_h2yge")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="player" unique_id=2091805746]
+sprite_frames = SubResource("SpriteFrames_7mycd")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="player" unique_id=88005629]
+shape = SubResource("CircleShape2D_272bh")
+
+[connection signal="body_shape_entered" from="player" to="player" method="OnBodyShapeEntered"]
+[connection signal="body_shape_exited" from="player" to="player" method="OnBodyShapeExited"]

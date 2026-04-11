@@ -36,28 +36,8 @@ extends Node2D
 # 不适用：
 	# 复杂逻辑对象（角色、UI）
 	# 需要编辑器可视化的对象
-	
-	# 维度对比
 
-# 本demo与对象池（Object Pool）对比
-	# 1️.核心目标
-		# Demo（RID + 批处理）：提高运行时性能（更新 + 渲染）
-		# 对象池（Object Pool）：避免频繁创建/销毁对象
-	# 2️.解决的问题
-		# Demo：Node 太多 → 卡
-		# 对象池：频繁 new / free → 卡 + 内存抖动
-	# 3️.是否使用 Node
-		# Demo：❌ 不用 Node（直接操作底层）
-		# 对象池：✅ 通常还是用 Node
-	# 4️.生命周期管理
-		# Demo：你手动管理（必须 free_rid）
-		# 对象池：池子帮你复用对象（减少创建销毁）
-	# 5️.适用规模
-		# Demo：上千 / 上万对象
-		# 对象池：几十 ~ 几百（甚至上千，但不极端）
-	# 6️.编程复杂度
-		# Demo：🚀 很高（底层 + 手动同步）
-		# 对象池：中等（逻辑复杂但仍在 Node 体系内）
+
 
 
 const BULLET_COUNT = 5000
@@ -165,3 +145,31 @@ func _exit_tree() -> void:
 
 	PhysicsServer2D.free_rid(shape)
 	bullets.clear()
+	
+# 【进阶拓展：本demo与对象池（Object Pool）对比】
+	# 1️.核心目标
+		# Demo（RID + 批处理）：提高运行时性能（更新 + 渲染）
+		# 对象池（Object Pool）：避免频繁创建/销毁对象
+	# 2️.解决的问题
+		# Demo：Node 太多 → 卡
+		# 对象池：频繁 new / free → 卡 + 内存抖动
+	# 3️.是否使用 Node
+		# Demo：❌ 不用 Node（直接操作底层）
+		# 对象池：✅ 通常还是用 Node
+	# 4️.生命周期管理
+		# Demo：你手动管理（必须 free_rid）
+		# 对象池：池子帮你复用对象（减少创建销毁）
+	# 5️.适用规模
+		# Demo：上千 / 上万对象
+		# 对象池：几十 ~ 几百（甚至上千，但不极端）
+	# 6️.编程复杂度
+		# Demo：🚀 很高（底层 + 手动同步）
+		# 对象池：中等（逻辑复杂但仍在 Node 体系内）
+	
+# 【进阶拓展：更极端的数据驱动（SoA）】
+	# 本 Demo 目前是 AoS（Array of Structs）：一个数组存了 5000 个 Bullet 对象。
+	# 因为 GDScript 中对象依然有内存开销，如果想要【极致性能】，可以改用 SoA：
+		# var bullet_positions := PackedVector2Array() # 连续内存，对 CPU Cache 极其友好
+		# var bullet_speeds := PackedFloat32Array()
+		# var bullet_rids := [] # 存放 RID
+	# 这样可以完全省去 Bullet.new() 的对象分配开销，并且遍历速度翻倍。
